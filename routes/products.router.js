@@ -22,7 +22,7 @@ router
       newProduct.save();
       res.json({ status: 201, success: true });
     } catch (err) {
-      res.json({ status: 404, success: false, error: err });
+      res.json({ status: 500, success: false, error: err });
     }
   });
 
