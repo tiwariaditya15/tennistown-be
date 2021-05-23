@@ -81,17 +81,12 @@ router.route("/update/:cartId").post(async (req, res) => {
       //     products: ,
       //   })
       // );
-      const ret = cart.products.map((product) => {
-        return product.productId.equals(productId)
-          ? {
-              ...product,
-              quantity,
-            }
-          : {
-              ...product,
-            };
-      });
-      console.log({ ret });
+      const olderProduct = cart.products.find(
+        (item) => item.productId === productId
+      );
+      const updatedProduct = extend(olderProduct, { quantity });
+      await cart.save();
+      res.json({ status: 200, updatedProduct });
     } catch (error) {
       res.json({ status: 500, error });
     }
