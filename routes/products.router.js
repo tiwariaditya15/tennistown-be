@@ -1,32 +1,23 @@
 const express = require("express");
-const { ProductModel } = require("../models/product.model");
+const { Product } = require("../models/product.model");
 const router = express.Router();
 
-// extract product beforehand to remove repetition
 router.param("productId", (req, res, next, productId) => {
   console.log({ productId });
   req.yes = "yessir";
   next();
 });
 
-// routes - /products/
-router
-  .route("/")
-  .get((req, res) => {
-    res.json({ success: true, route: "/products/", method: "GET" });
-  })
-  .post((req, res) => {
-    try {
-      const product = req.body;
-      const newProduct = new ProductModel(product);
-      newProduct.save();
-      res.json({ status: 201, success: true });
-    } catch (err) {
-      res.json({ status: 500, success: false, error: err });
-    }
-  });
+router.route("/").get(async (req, res) => {
+  try {
+    const products = await Product.find({});
+    res.json({ status: 200, products });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: 500, error: error });
+  }
+});
 
-// routes - /products/:productId
 router
   .route("/:productId")
   .get((req, res) => {

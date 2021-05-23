@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { UserModel } = require("../models/user.model");
+const { User } = require("../models/user.model");
 
 // /accounts
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await UserModel.find({ username, password });
+    const user = await User.find({ username, password });
     user.length
       ? res.json({ status: 200, success: true })
       : res.json({ status: 401, success: false });
@@ -17,7 +17,7 @@ router.post("/login", async (req, res) => {
 
 router.post("/emailsignup", async (req, res) => {
   try {
-    const user = new UserModel(req.body);
+    const user = new User(req.body);
     await user.save();
     res.json({ status: 201, success: true });
   } catch (err) {
