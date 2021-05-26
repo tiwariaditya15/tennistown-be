@@ -8,7 +8,7 @@ router.post("/login", async (req, res) => {
     const { username, password } = req.body;
     const user = await User.find({ username, password });
     user.length
-      ? res.json({ status: 200, success: true })
+      ? res.json({ status: 200, success: true, userId: user[0]._id })
       : res.json({ status: 401, success: false });
   } catch (error) {
     res.json({ status: 500, success: false });
