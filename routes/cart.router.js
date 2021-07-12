@@ -7,10 +7,10 @@ const {
   updateProductQuantity,
 } = require("../controllers/cart.controller");
 
-router.route("/:userId").get(getCart);
+router.route("/").get(getCart);
 
 router.route("/").post(addProductToCart);
 
-router.route("/update/:userId").post(updateProductQuantity);
+router.route("/update/").post(updateProductQuantity);
 
 module.exports = router;

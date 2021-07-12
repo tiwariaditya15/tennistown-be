@@ -18,24 +18,10 @@ router.route("/").get(async (req, res) => {
   }
 });
 
-router
-  .route("/:productId")
-  .get((req, res) => {
-    res.json({
-      success: true,
-      route: "/products/:productId",
-      method: "GET",
-      type: req.yes,
-      param: req.params.productId,
-    });
-  })
-  .post((req, res) => {
-    res.json({
-      success: true,
-      route: "/products/:productId",
-      method: "POST",
-      param: req.params.productId,
-    });
+router.route("/:productId").get((req, res) => {
+  res.json({
+    success: true,
+    route: "/products/:productId",
   });
-
+});
 module.exports = router;

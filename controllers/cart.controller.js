@@ -2,16 +2,14 @@ const ObjectId = require("mongoose").Types.ObjectId;
 const { extend } = require("lodash");
 
 const { Cart } = require("../models/cart.model");
-const { User } = require("../models/user.model");
 
 const getCart = async (req, res) => {
-  const { userId } = req.params;
   try {
-    const cart = await Cart.find({ userId })
-      .populate("products.productId")
-      .exec();
-
-    res.json({ status: 200, cart: cart[0] });
+    const { cart } = req;
+    res.json({
+      status: 200,
+      products: cart.products.filter((product) => product.quantity),
+    });
   } catch (error) {
     res.json({ status: 500, error });
   }
@@ -19,41 +17,51 @@ const getCart = async (req, res) => {
 
 const addProductToCart = async (req, res) => {
   try {
-    const { productId, userId, cartId, quantity } = req.body;
-
-    if (cartId === undefined) {
-      const cart = new Cart();
-      cart.userId = userId;
-      cart.products.push({ productId, quantity });
-      const addedCart = await cart.save();
-      res.json({ status: 200, addedCart });
-    } else if (
-      ObjectId.isValid(cartId) &&
-      ObjectId.isValid(userId) &&
-      ObjectId.isValid(productId)
-    ) {
-      const user = await User.findById(userId);
-      const [cart] = await Cart.find({ userId: user._id, _id: cartId });
-
+    const { productId, quantity } = req.body;
+    const { cart, userId } = req;
+    if (ObjectId.isValid(productId)) {
       if (cart) {
         if (
-          !cart.products.some((product) => product.productId.equals(productId))
+          !cart.products.some((product) => product.product.equals(productId))
         ) {
-          cart.products.push({ productId, quantity });
-          const updatedCart = await cart.save();
-          return res.json({ status: 200, updatedCart });
+          cart.products.push({ product: productId, quantity });
+          await cart.save();
+          const updatedCart = await Cart.find({ userId }).populate(
+            "products.product"
+          );
+
+          const updatedProduct = updatedCart[0].products.find((product) =>
+            product.product.equals(productId)
+          );
+
+          return res.json({ status: 200, updatedProduct });
+        } else {
+          const product = cart.products.find((productItem) =>
+            productItem.product.equals(productId)
+          );
+          extend(product, { quantity });
+          await cart.save();
+
+          const updatedCart = await Cart.find({ userId }).populate(
+            "products.product"
+          );
+
+          const updatedProduct = updatedCart[0].products.find((product) =>
+            product.product.equals(productId)
+          );
+
+          return res.json({ status: 200, updatedProduct });
         }
-        res.json({ status: 409, message: "Product already exists in cart." });
       } else {
-        res.json({
+        return res.json({
           status: 404,
           message: "User/Cart with sent UserID/CartID not found.",
         });
       }
     } else {
-      res.json({
+      return res.json({
         status: 400,
-        message: "UserID/CartID/ProductID isn't valid mongoose ObjectID.",
+        message: "ProductID isn't valid mongoose ObjectID.",
       });
     }
   } catch (error) {
@@ -63,31 +71,25 @@ const addProductToCart = async (req, res) => {
 };
 
 const updateProductQuantity = async (req, res) => {
-  const { userId } = req.params;
+  const { cart } = req;
   const { productId, quantity } = req.body;
-  console.log({ userId, productId, quantity });
-  if (ObjectId.isValid(userId)) {
-    try {
-      const [cart] = await Cart.find({ userId });
 
-      if (cart) {
-        const olderProduct = cart.products.find((item) =>
-          item.productId.equals(productId)
-        );
-        extend(olderProduct, { quantity });
-        await cart.save();
-        return res.json({ status: 200, productId, quantity });
-      }
-      res.json({
-        status: 404,
-        message: "Couldn't find cart with given userID",
-      });
-    } catch (error) {
-      res.json({ status: 500, error });
-    }
-  } else {
-    res.json({ status: 400, message: "UserID isn't a valid mongoose id." });
+  try {
+    // when inc/dnc
+    const olderProduct = cart.products.find((item) =>
+      item.product.equals(productId)
+    );
+    extend(olderProduct, { quantity });
+
+    await cart.save();
+    return res.json({ status: 200, product: productId, quantity });
+  } catch (error) {
+    res.json({ status: 500, error });
   }
 };
 
-module.exports = { getCart, addProductToCart, updateProductQuantity };
+module.exports = {
+  getCart,
+  addProductToCart,
+  updateProductQuantity,
+};
