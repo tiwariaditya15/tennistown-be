@@ -5,7 +5,9 @@ const getWishlistsByUserId = async (req, res, next) => {
   try {
     const user = await User.findById(userId);
     if (user) {
-      const [wishlists] = await Wishlists.find({ userId: user._id });
+      const [wishlists] = await Wishlists.find({ userId: user._id }).populate(
+        "products.product"
+      );
       req.wishlists = wishlists;
       return next();
     }

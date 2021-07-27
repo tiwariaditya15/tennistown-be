@@ -11,7 +11,7 @@ const login = async (req, res) => {
     if (!user) {
       return res.json({
         status: 404,
-        message: "User doesn't exist with given username.",
+        message: "Wrong Username.",
       });
     }
     const validate = await bcrypt.compare(password, user.password);
@@ -48,11 +48,15 @@ const emailSignup = async (req, res) => {
     return res.json({ status: 201, token });
   } catch (err) {
     if (err.code === 11000) {
-      return res.json({ status: 409, message: Object.keys(err.keyValue) });
+      return res.json({
+        status: 409,
+        message: Object.keys(err.keyValue) + " not available.",
+      });
     }
     if (err) {
+      console.log({ error: err.errors });
       const errors = Object.keys(err.errors).map((error) => {
-        return err.errors[error].properties.message;
+        return { field: error, message: err.errors[error].properties.message };
       });
       return res.json({ status: 400, errors });
     }

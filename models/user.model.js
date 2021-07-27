@@ -31,7 +31,7 @@ const UserSchema = new Schema({
         return username.length >= 8 && username.length <= 16;
       },
       message: (props) =>
-        `Username must have 8-16 characters one capital & small letter with one number & special character. Got ${props.value} instead.`,
+        `Username must have 8-16 characters with atleast a number.`,
     },
     required: [true, "Username is missing."],
   },
@@ -42,7 +42,7 @@ const UserSchema = new Schema({
         return password.length >= 8;
       },
       message: (props) =>
-        `password must have more than 8 characters one capital & small letter with one number & special character. Got ${props.value} instead.`,
+        `Password should be atleast 8 characters long with atleast a number.`,
     },
     required: [true, "Password is missing."],
   },

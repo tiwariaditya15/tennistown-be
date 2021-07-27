@@ -8,11 +8,12 @@ const verifyToken = async (req, res, next) => {
       req.userId = decoded.userId;
       return next();
     }
-    return res.status(400).json({ message: "Token is missing." });
+    return res.status(401).json({ message: "Token is missing." });
   } catch (error) {
     if (error.name && error.name === "TokenExpiredError") {
       return res.status(401).json({ message: error.message });
     }
+    return res.status(401).json({ message: error.message });
   }
 };
 
