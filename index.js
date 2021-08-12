@@ -37,11 +37,18 @@ app.use(routeNotFound);
 // connectToAtlas(app);
 mongoose.set("useCreateIndex", true);
 async function connect() {
-  await mongoose.connect(process.env.CONNECTION_URL, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-  });
-  console.log("Connected to atlas.");
+  try {
+    await mongoose.connect(
+      "mongodb+srv://voldemort:7378765387@cluster0.yzmsh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+      {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+      }
+    );
+    console.log("Connected to atlas.");
+  } catch (error) {
+    console.log(error);
+  }
 }
 app.listen(process.env.PORT || 5000, () => console.log("Server up on 5000."));
 connect();
