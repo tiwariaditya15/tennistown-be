@@ -1,4 +1,4 @@
-const dotenv = require("dotenv");
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { connectToAtlas } = require("./db/db.connect.js");
@@ -22,7 +22,6 @@ app.use("/accounts", authenticationRouter);
 app.use(verifyToken);
 app.use("/wishlists", getWishlistsByUserId, wishlistsRouter);
 app.use("/cart", getCartByUserId, cartRouter);
-dotenv.config();
 
 app.use("/", (req, res) => {
   res.send({
@@ -39,10 +38,13 @@ app.use(routeNotFound);
 mongoose.set("useCreateIndex", true);
 async function connect() {
   try {
-    await mongoose.connect(process.env.CONNECTION_URL, {
-      useUnifiedTopology: true,
-      useNewUrlParser: true,
-    });
+    await mongoose.connect(
+      "mongodb+srv://voldemort:7378765387@cluster0.yzmsh.mongodb.net/tennistown?retryWrites=true&w=majority",
+      {
+        useUnifiedTopology: true,
+        useNewUrlParser: true,
+      }
+    );
     console.log("Connected to atlas.");
   } catch (error) {
     console.log(error);
