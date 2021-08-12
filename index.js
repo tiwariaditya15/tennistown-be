@@ -1,4 +1,4 @@
-require("dotenv").config();
+const dotenv = require("dotenv");
 const express = require("express");
 const cors = require("cors");
 const { connectToAtlas } = require("./db/db.connect.js");
@@ -22,6 +22,7 @@ app.use("/accounts", authenticationRouter);
 app.use(verifyToken);
 app.use("/wishlists", getWishlistsByUserId, wishlistsRouter);
 app.use("/cart", getCartByUserId, cartRouter);
+dotenv.config();
 
 app.use("/", (req, res) => {
   res.send({
