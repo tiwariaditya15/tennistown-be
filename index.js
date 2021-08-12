@@ -11,6 +11,7 @@ const errorHandler = require("./middlewares/error-handler.middleware.js");
 const verifyToken = require("./middlewares/verifyToken.middleware");
 const getWishlistsByUserId = require("./middlewares/getWishlistsByUserId.middleware");
 const getCartByUserId = require("./middlewares/getCartByUserId.middleware.js");
+const mongoose = require("mongoose");
 
 const app = express();
 
@@ -33,6 +34,21 @@ app.use("/", (req, res) => {
 app.use(errorHandler);
 app.use(routeNotFound);
 
-connectToAtlas(app);
-
-app.listen(process.env.PORT || 5000, () => console.log("Server up on 5000."));
+// connectToAtlas(app);
+mongoose.set("useCreateIndex", true);
+mongoose
+  .connect(process.env.CONNECTION_URL, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+  })
+  .then(() => {
+    console.log("Connected to atlas.");
+    app.listen(process.env.PORT || 5000, () =>
+      console.log("Server up on 5000.")
+    );
+  })
+  .catch((err) => {
+    if (err.code === "ECONNREFUSED") {
+      console.log("Internet Connection not found.");
+    }
+  });
