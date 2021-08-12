@@ -33,13 +33,6 @@ app.use("/", (req, res) => {
 app.use(errorHandler);
 app.use(routeNotFound);
 
-connectToAtlas(app)
-  .then(() => {
-    console.log("Connected to atlas.");
-  })
-  .catch((err) => {
-    if (err.code === "ECONNREFUSED") {
-      console.log("Internet Connection not found.");
-    }
-  });
+connectToAtlas(app);
+
 app.listen(process.env.PORT || 5000, () => console.log("Server up on 5000."));
