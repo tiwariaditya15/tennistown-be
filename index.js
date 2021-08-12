@@ -34,3 +34,4 @@ app.use(errorHandler);
 app.use(routeNotFound);
 
 connectToAtlas(app);
+app.listen(process.env.PORT || 5000, () => console.log("Server up on 5000."));
