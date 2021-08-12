@@ -38,13 +38,10 @@ app.use(routeNotFound);
 mongoose.set("useCreateIndex", true);
 async function connect() {
   try {
-    await mongoose.connect(
-      "mongodb+srv://voldemort:7378765387@cluster0.yzmsh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-      {
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-      }
-    );
+    await mongoose.connect(process.env.CONNECTION_URL, {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+    });
     console.log("Connected to atlas.");
   } catch (error) {
     console.log(error);
