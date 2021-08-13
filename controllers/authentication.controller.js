@@ -23,6 +23,7 @@ const login = async (req, res) => {
     }
     return res.json({ status: 401, message: "Incorrect password!" });
   } catch (error) {
+    console.log({ error });
     res.json({ status: 500, success: false });
   }
 };
@@ -47,6 +48,7 @@ const emailSignup = async (req, res) => {
     });
     return res.json({ status: 201, token });
   } catch (err) {
+    console.log({ err });
     if (err.code === 11000) {
       return res.json({
         status: 409,
