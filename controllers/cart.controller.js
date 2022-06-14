@@ -88,8 +88,20 @@ const updateProductQuantity = async (req, res) => {
   }
 };
 
+const resetCart = async (req, res) => {
+  try {
+    const { cart } = req;
+    cart.products = [];
+    await cart.save();
+    return res.json({ status: 200, message: "RESET" });
+  } catch (error) {
+    res.json({ status: 500, error });
+  }
+};
+
 module.exports = {
   getCart,
   addProductToCart,
   updateProductQuantity,
+  resetCart,
 };

@@ -5,6 +5,7 @@ const {
   getCart,
   addProductToCart,
   updateProductQuantity,
+  resetCart,
 } = require("../controllers/cart.controller");
 
 router.route("/").get(getCart);
@@ -12,5 +13,6 @@ router.route("/").get(getCart);
 router.route("/").post(addProductToCart);
 
 router.route("/update/").post(updateProductQuantity);
+router.route("/reset/").post(resetCart);
 
 module.exports = router;
